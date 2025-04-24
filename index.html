@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Min Enkät</title>
+    <link href="https://unpkg.com/survey-core/modern.min.css" rel="stylesheet" />
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="https://unpkg.com/survey-jquery@latest/survey.jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="surveyContainer"></div>
+
+    <script>
+      Survey.StylesManager.applyTheme("modern");
+
+      // ✅ Your Survey JSON 
+      const surveyJSON = {
+  "title": "Digital Device Use & Survey Experience",
+  "completedHtml": "<h3>🎉 Thank you for completing the survey!</h3><p>Your responses have been recorded for research purposes.</p>",
+  "pages": [
+    {
+      "name": "welcome",
+      "elements": [
+        {
+          "type": "html",
+          "name": "question1",
+          "html": "<h3>Welcome!</h3><p>We're currently working on improving the design of a new research survey. In this version, we're testing how different survey formats influence user experience and data quality.</p><p>Your participation is anonymous, and none of your personal information will be collected. However, to better understand how users interact with surveys, we will collect non-identifiable behavioral data, such as:<ul><li>Time spent on each question</li><li>Overall completion time</li><li>Whether or not you complete the survey</li></ul>This information helps us evaluate the design and effectiveness of surveys. Your responses will be used solely for research purposes.</p><p><strong>By continuing, you consent to participate in this study.</strong></p>"
+        },
+        {
+          "type": "radiogroup",
+          "name": "age",
+          "title": "Age:",
+          "isRequired": true,
+          "choices": [
+            "< 20",
+            "20 - 29",
+            "30 - 39",
+            "40 - 49",
+            "50 - 59",
+            "60 ≤"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "gender",
+          "title": "Gender:",
+          "isRequired": true,
+          "choices": [
+            "Male",
+            "Female",
+            "Other",
+            "Do not want to specify"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "page1",
+      "elements": [
+        {
+          "type": "html",
+          "name": "quest_fullscreen_image",
+          "html": "<div style='width: 80vw; height: 90vh; overflow: hidden; display: flex; align-items: center; justify-content: center;'> <img src='https://i.imgur.com/qwTPles.png' alt='Quest Image' style='width: 100%; height: 100%; object-fit: cover;' /> </div>"
+        }
+      ]
+    },
+    {
+      "name": "phone_use",
+      "title": "Section 2: Phone Use",
+      "elements": [
+        {
+          "type": "rating",
+          "name": "weekday_phone_hours",
+          "title": "On a typical weekday, how many hours do you actively use your phone?",
+          "rateCount": 12,
+          "rateMax": 12
+        },
+        {
+          "type": "rating",
+          "name": "weekend_phone_hours",
+          "title": "On a typical weekend day, how many hours do you actively use your phone?",
+          "rateCount": 12,
+          "rateMax": 12
+        },
+        {
+  "type": "checkbox",
+  "name": "phone_activities",
+  "title": "Which of the following do you use your phone for daily?",
+  "choices": [
+    "Messaging / calls",
+    "Social media",
+    "Work or school",
+    "Streaming or games",
+    "Online shopping",
+    "Reading news or articles"
+  ],
+  "showOtherItem": true,
+  "otherText": "Other (please specify)",
+  "isRequired": true,
+  "cssClasses": {
+    "root": "checkbox-group",
+    "item": "checkbox-item",
+    "label": "checkbox-label"
+  }
+}
+,
+        {
+          "type": "checkbox",
+          "name": "phone_time",
+          "title": "At what times do you usually use your phone the most? (Select up to two)",
+          "choices": [
+            "Morning (06–10)",
+            "Midday (10–14)",
+            "Afternoon (14–18)",
+            "Evening (18–22)",
+            "Late night (22–02)"
+          ],
+          "colCount": 2
+        },
+        {
+          "type": "radiogroup",
+          "name": "phone_productivity_effect",
+          "title": "How does phone use affect your productivity during a typical weekday?",
+          "choices": [
+            "Very negatively",
+            "Somewhat negatively",
+            "No effect",
+            "Somewhat positively",
+            "Very positively"
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "phone_productivity_reason",
+          "title": "In what way does your phone use affect your productivity?"
+        },
+        {
+          "type": "html",
+          "name": "short_answer_warning",
+          "visibleIf": "{phone_productivity_reason.length} >= 1 and {phone_productivity_reason.length} <= 6",
+          "html": "<div onclick=\"this.style.display='none'\" style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);'>  <img src='https://i.imgur.com/6SNv1hV.png' alt='Warning Icon' style='width: 100px; height: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));' />  <br/>I am not pleased with your lack of engagement, I will let it slide for this time, however, remember that the key to the treasure is well motivated answers.<br/><small>(Click to close)</small></div>"
+        },
+        {
+          "type": "html",
+          "name": "medium_answer_popup",
+          "visibleIf": "{phone_productivity_reason.length} >= 50 and {phone_productivity_reason.length} <= 1000",
+          "html": "<div onclick=\"this.style.display='none'\" style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);'>  <img src='https://i.imgur.com/6SNv1hV.png' alt='Reward Icon' style='width: 100px; height: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));' />  <br/>This is what I like to see! A strong, detailed reflection. You're definitely on the right track toward the treasure!<br/><small>(Click to close)</small></div>"
+        },
+        {
+          "type": "comment",
+          "name": "phone_sleep_impact",
+          "title": "In what way does your phone usage affect your sleep patterns?"
+        },
+        {
+          "type": "comment",
+          "name": "phone_feelings",
+          "title": "After using the phone for a long time (2+ hours), how do you usually feel?"
+        },
+        {
+          "type": "checkbox",
+          "name": "phone_effects",
+          "title": "Have you noticed any of the following after long phone use?",
+          "choices": [
+            "Eye strain",
+            "Headache",
+            "Neck or hand pain",
+            "Difficulty concentrating",
+            "None of the above"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "phone_morning_check",
+          "title": "How often do you check your phone within the first 10 minutes after waking up?",
+          "choices": [
+            "Never",
+            "Rarely",
+            "Sometimes",
+            "Often",
+            "Always"
+          ]
+        },
+        {
+          "type": "html",
+          "name": "xpBar",
+          "html": "<div style='position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: #222; color: white; padding: 10px 20px; font-family: Arial, sans-serif; box-shadow: 0 2px 5px rgba(0,0,0,0.3);'>  <div style='max-width: 800px; margin: 0 auto;'>    ⭐ XP: <span id='xpValue'>{xpScore}</span>    <div style='background: #444; border-radius: 5px; overflow: hidden; height: 20px; margin-top: 5px;'>      <div style='height: 100%; width: {xpScore}%; background: linear-gradient(90deg, #00BCD4, #4CAF50); transition: width 0.3s ease;'></div>    </div>  </div></div><div style='height: 60px;'></div>"
+        },
+        {
+          "type": "html",
+          "name": "show25popup",
+          "visibleIf": "{xpScore} >= 25 and {xpScore} < 50",
+          "html": "<div id='popup25' onclick='this.style.display=\"none\"' style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; border: 2px solid #4CAF50; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); text-align: center;'>  <img src='https://i.imgur.com/cufxbvm.png' style='width: 100px; height: auto; margin-bottom: 15px;'/>  🎉 Congratulations! You've earned the Diamond of Knowledge! You only need 3 more artifacts to reach the treasure!<br><small>(Klicka för att stänga)</small></div>"
+        },
+        {
+          "type": "html",
+          "name": "floating_diamond_emblem",
+          "visibleIf": "{xpScore} >= 25",
+          "html": "<div style='position: fixed; bottom: 20px; right: 20px; z-index: 999;'>  <img src='https://i.imgur.com/cufxbvm.png' alt='Diamond Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        }
+      ]
+    },
+    {
+      "name": "tv_use",
+      "title": "Section 3: TV Use",
+      "elements": [
+        {
+          "type": "rating",
+          "name": "weekday_tv_hours",
+          "title": "How many hours of TV do you watch on a typical weekday?",
+          "rateCount": 12,
+          "rateMax": 12
+        },
+        {
+          "type": "rating",
+          "name": "weekend_tv_hours",
+          "title": "How many hours of TV do you watch on a typical weekend day?",
+          "rateCount": 12,
+          "rateMax": 12
+        },
+        {
+          "type": "checkbox",
+          "name": "tv_content",
+          "title": "What types of TV content do you usually watch?",
+          "choices": [
+            "News",
+            "Sports",
+            "Series",
+            "Movies",
+            "Documentaries",
+            "Reality TV"
+          ],
+          "showOtherItem": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "tv_sleep_effect",
+          "title": "How does watching TV affect your sleep patterns?",
+          "choices": [
+            "Very negatively",
+            "Somewhat negatively",
+            "No effect",
+            "Somewhat positively",
+            "Very positively"
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "tv_sleep_reason",
+          "title": "In what way does TV viewing affect your sleep patterns?"
+        },
+        {
+          "type": "html",
+          "name": "tv_sleep_short_warning",
+          "visibleIf": "{tv_sleep_reason.length} >= 1 and {tv_sleep_reason.length} <= 6",
+          "html": "<div onclick=\"this.style.display='none'\" style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background-color: rgba(0, 0, 0, 0.8); color: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);'>  <img src='https://i.imgur.com/6SNv1hV.png' alt='Warning Icon' style='width: 100px; height: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.8));' />  <br/>That’s a little *too* short! Give a bit more detail so we can get closer to the truth of your sleep habits. 💤<br/><small>(Click to close)</small></div>"
+        },
+        {
+          "type": "html",
+          "name": "tv_sleep_medium_popup",
+          "visibleIf": "{tv_sleep_reason.length} >= 50 and {tv_sleep_reason.length} <= 1000",
+          "html": "<div onclick=\"this.style.display='none'\" style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);'>  <img src='https://i.imgur.com/6SNv1hV.png' alt='Reward Icon' style='width: 100px; height: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.8));' />  <br/>Now *that’s* a proper insight! Thoughtful, clear, and heading straight for the treasure. 🌟<br/><small>(Click to close)</small></div>"
+        },
+        {
+          "type": "comment",
+          "name": "tv_feelings",
+          "title": "After watching TV for a long time (2+ hours), how do you usually feel?"
+        },
+        {
+          "type": "radiogroup",
+          "name": "tv_social_presence",
+          "title": "How often is the TV on during social gatherings in your home?",
+          "choices": [
+            "Never",
+            "Rarely",
+            "Sometimes",
+            "Often",
+            "Always"
+          ]
+        },
+        {
+          "type": "html",
+          "name": "question2",
+          "html": "<div style='position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: #222; color: white; padding: 10px 20px; font-family: Arial, sans-serif; box-shadow: 0 2px 5px rgba(0,0,0,0.3);'>  <div style='max-width: 800px; margin: 0 auto;'>    ⭐ XP: <span id='xpValue'>{xpScore}</span>    <div style='background: #444; border-radius: 5px; overflow: hidden; height: 20px; margin-top: 5px;'>      <div style='height: 100%; width: {xpScore}%; background: linear-gradient(90deg, #00BCD4, #4CAF50); transition: width 0.3s ease;'></div>    </div>  </div></div><div style='height: 60px;'></div>"
+        },
+        {
+          "type": "html",
+          "name": "show50popup",
+          "visibleIf": "{xpScore} >= 50 and {xpScore} < 75",
+          "html": "<div id='popup50' onclick='this.style.display=\"none\"' style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; border: 2px solid #2196F3; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); text-align: center;'>  <img src='https://img.freepik.com/premium-vector/pixel-art-key-vector-icon-isolated-white-background_97231-3539.jpg?w=1380' alt='Diamond' style='width: 100px; height: auto; margin-bottom: 15px;'/>  Congratulations! You've earned the Key to all locks! You only need 2 more artifacts to reach the treasure!<br><small>(Klicka för att stänga)</small></div>"
+        },
+        {
+          "type": "html",
+          "name": "floating_diamond_emblem_pages2",
+          "visibleIf": "{xpScore} >= 25",
+          "html": "<div style='position: fixed; bottom: 20px; right: 20px; z-index: 999;'>  <img src='https://i.imgur.com/cufxbvm.png' alt='Diamond Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        },
+        {
+          "type": "html",
+          "name": "second_emblem_50xp",
+          "visibleIf": "{xpScore} >= 50",
+          "html": "<div style='position: fixed; bottom: 20px; right: 80px; z-index: 999;'>  <img src='https://img.freepik.com/premium-vector/pixel-art-key-vector-icon-isolated-white-background_97231-3539.jpg?w=1380' alt='Shield Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        }
+      ]
+    },
+    {
+      "name": "computer_use",
+      "title": "Section 4: Computer Use",
+      "elements": [
+        {
+          "type": "rating",
+          "name": "weekday_computer_hours",
+          "title": "How many hours do you use a computer (non-phone) during a typical weekday?",
+          "rateCount": 10,
+          "rateMax": 10
+        },
+        {
+          "type": "rating",
+          "name": "weekend_computer_hours",
+          "title": "How many hours do you use a computer (non-phone) during a typical weekend day?",
+          "rateCount": 10,
+          "rateMax": 10
+        },
+        {
+          "type": "checkbox",
+          "name": "computer_reasons",
+          "title": "What are your main reasons for using a computer?",
+          "choices": [
+            "Work",
+            "Studying",
+            "Gaming",
+            "Browsing / YouTube",
+            "Creative tasks (e.g., design, writing)"
+          ],
+          "showOtherItem": true
+        },
+        {
+          "type": "checkbox",
+          "name": "computer_times",
+          "title": "When during the day do you mostly use a computer? (Select up to two)",
+          "choices": [
+            "Morning (06–10)",
+            "Midday (10–14)",
+            "Afternoon (14–18)",
+            "Evening (18–22)",
+            "Late night (22–02)"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "computer_productivity_effect",
+          "title": "How does computer use affect your work / school productivity?",
+          "choices": [
+            "Strongly reduces productivity",
+            "Somewhat reduces productivity",
+            "No effect",
+            "Somewhat improves productivity",
+            "Strongly improves productivity"
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "computer_productivity_reason",
+          "title": "Why do you think computer use affects your productivity this way?"
+        },
+        {
+          "type": "html",
+          "name": "computer_productivity_reason_popup",
+          "visibleIf": "{computer_productivity_reason.length} >= 1",
+          "html": "<div onclick=\"this.style.display='none'\" style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background-color: rgba(0, 0, 0, 0.85); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 0 25px rgba(255, 255, 255, 0.7); animation: glow 2s infinite alternate;'>  <img src='https://img.freepik.com/free-vector/flat-illustration-international-tiger-day-awareness_23-2150518815.jpg?t=st=1745273621~exp=1745277221~hmac=678008bd4dd37e6c40dba2bc8c51a553f3e42f21e5d90d9ae802000d66ea9b13&w=1380' alt='Popup Icon' style='width: 100px; height: 100px; margin-bottom: 20px;' />  <br/>Thank you for your answer!You have earned yourself a companion<br/><small>(Click to close)</small></div>"
+        },
+        {
+          "type": "checkbox",
+          "name": "computer_symptoms",
+          "title": "Have you experienced any of the following physical symptoms from computer use?",
+          "choices": [
+            "Back pain",
+            "Neck pain",
+            "Hand/wrist discomfort",
+            "Headaches",
+            "None of the above"
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "computer_time_control",
+          "title": "What steps, if any, have you taken to reduce or control your computer time?"
+        },
+        {
+          "type": "html",
+          "name": "question3",
+          "html": "<div style='position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: #222; color: white; padding: 10px 20px; font-family: Arial, sans-serif; box-shadow: 0 2px 5px rgba(0,0,0,0.3);'>  <div style='max-width: 800px; margin: 0 auto;'>    ⭐ XP: <span id='xpValue'>{xpScore}</span>    <div style='background: #444; border-radius: 5px; overflow: hidden; height: 20px; margin-top: 5px;'>      <div style='height: 100%; width: {xpScore}%; background: linear-gradient(90deg, #00BCD4, #4CAF50); transition: width 0.3s ease;'></div>    </div>  </div></div><div style='height: 60px;'></div>"
+        },
+        {
+          "type": "html",
+          "name": "floating_diamond_emblem_pages4",
+          "visibleIf": "{xpScore} >= 25",
+          "html": "<div style='position: fixed; bottom: 20px; right: 20px; z-index: 999;'>  <img src='https://i.imgur.com/cufxbvm.png' alt='Diamond Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        },
+        {
+          "type": "html",
+          "name": "second_emblem_50xp3",
+          "visibleIf": "{xpScore} >= 50",
+          "html": "<div style='position: fixed; bottom: 20px; right: 80px; z-index: 999;'>  <img src='https://img.freepik.com/premium-vector/pixel-art-key-vector-icon-isolated-white-background_97231-3539.jpg?w=1380' alt='Shield Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        },
+        {
+          "type": "html",
+          "name": "third_emblem_75xp2",
+          "visibleIf": "{xpScore} >= 75",
+          "html": "<div style='position: fixed; bottom: 20px; right: 140px; z-index: 999;'>  <img src='https://img.freepik.com/free-vector/sword-weapon-video-game-icon_18591-84297.jpg?t=st=1745226571~exp=1745230171~hmac=8baec13a4d6e707a60f0440ff3c2f3538fdb319b195dac28bec0671b1818e2f7&w=1380' alt='Crown Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        },
+        {
+          "type": "html",
+          "name": "short_answer_warning_emblem",
+          "visibleIf": "{computer_productivity_reason.length} >= 1",
+          "html": "<div style='position: fixed; bottom: 20px; right: 260px; z-index: 999;'>  <img src='https://img.freepik.com/free-vector/flat-illustration-international-tiger-day-awareness_23-2150518815.jpg?t=st=1745273621~exp=1745277221~hmac=678008bd4dd37e6c40dba2bc8c51a553f3e42f21e5d90d9ae802000d66ea9b13&w=1380' alt='Warning Icon' style='width: 50px; height: 50px; border-radius: 50%; box-shadow: 0 0 15px rgba(0,0,0,0.3);'/> </div>"
+        }
+      ]
+    },
+    {
+      "name": "feedback",
+      "title": "Section 5: Survey Experience & Feedback",
+      "elements": [
+        {
+          "type": "rating",
+          "name": "survey_engagement",
+          "title": "How engaged did you feel during the survey?",
+          "rateCount": 10,
+          "rateMax": 10
+        },
+        {
+          "type": "radiogroup",
+          "name": "survey_clarity",
+          "title": "Did you find the questions well-worded and easy to understand?",
+          "choices": [
+            "Yes",
+            "No",
+            "Partially"
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "survey_clarity_feedback",
+          "title": "If you answered 'No' or 'Partially,' please explain why:"
+        },
+        {
+          "type": "radiogroup",
+          "name": "question_difficulty",
+          "title": "Were there any questions you found difficult or unclear?",
+          "choices": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "difficult_questions",
+          "title": "If yes, which ones?"
+        },
+        {
+          "type": "rating",
+          "name": "survey_fun",
+          "title": "How fun or interesting did you find answering the survey?",
+          "rateCount": 10,
+          "rateMax": 10
+        },
+        {
+          "type": "radiogroup",
+          "name": "response_accuracy",
+          "title": "To what extent do you believe your answers reflect your actual habits and experiences?",
+          "choices": [
+            "Not at all",
+            "To a small extent",
+            "To a moderate extent",
+            "To a large extent",
+            "Very much"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "survey_navigation",
+          "title": "How easy or difficult was it to navigate through the survey?",
+          "choices": [
+            "Very difficult",
+            "Somewhat difficult",
+            "Neutral",
+            "Somewhat easy",
+            "Very easy"
+          ]
+        },
+        {
+          "type": "radiogroup",
+          "name": "survey_hesitation",
+          "title": "Was there anything in the survey that made you feel unsure or hesitant when answering?",
+          "choices": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "survey_hesitation_reason",
+          "title": "If yes, what made you feel unsure?"
+        },
+        {
+          "type": "comment",
+          "name": "survey_improvements",
+          "title": "If you could improve the survey, what would you change?"
+        },
+        {
+          "type": "html",
+          "name": "question4",
+          "html": "<div style='position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: #222; color: white; padding: 10px 20px; font-family: Arial, sans-serif; box-shadow: 0 2px 5px rgba(0,0,0,0.3);'>  <div style='max-width: 800px; margin: 0 auto;'>    ⭐ XP: <span id='xpValue'>{xpScore}</span>    <div style='background: #444; border-radius: 5px; overflow: hidden; height: 20px; margin-top: 5px;'>      <div style='height: 100%; width: {xpScore}%; background: linear-gradient(90deg, #00BCD4, #4CAF50); transition: width 0.3s ease;'></div>    </div>  </div></div><div style='height: 60px;'></div>"
+        },
+        {
+          "type": "html",
+          "name": "show100popup",
+          "visibleIf": "{xpScore} >= 100",
+          "html": "<div id='popup100' onclick='this.style.display=\"none\"' style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; border: 2px solid #9C27B0; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); text-align: center;'>  <img src='https://img.freepik.com/free-vector/gold-crown-with-jewels-3d-icon-royal-imperial-symbol-golden-accessory-with-gems-3d-vector-illustration-white-background-success-royalty-luxury-monarchy-decoration-concept_74855-26000.jpg?uid=R196936359&ga=GA1.1.1110604184.1745225314&semt=ais_hybrid&w=740' alt='Diamond' style='width: 100px; height: auto; margin-bottom: 15px;'/>  👑 100 XP – Congratulations! You've reached the final level & earned the Crown of Kings! You have all artifacts to collect the treasure, procide with the last questions!<br><small>(Klicka för att stänga)</small></div>"
+        },
+        {
+          "type": "html",
+          "name": "show75popup",
+          "visibleIf": "{xpScore} >= 75 and {xpScore} < 100",
+          "html": "<div id='popup75' onclick='this.style.display=\"none\"' style='cursor: pointer; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; border: 2px solid #FF9800; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); text-align: center;'>  <img src='https://img.freepik.com/free-vector/sword-weapon-video-game-icon_18591-84297.jpg?t=st=1745226571~exp=1745230171~hmac=8baec13a4d6e707a60f0440ff3c2f3538fdb319b195dac28bec0671b1818e2f7&w=1380' alt='Diamond' style='width: 100px; height: auto; margin-bottom: 15px;'/>  💥 Congratulations! You've earned the Sword of Power! You only need 1 more artifacts to reach the treasure<br><small>(Klicka för att stänga)</small></div>"
+        },
+        {
+          "type": "html",
+          "name": "floating_diamond_emblem_pages3",
+          "visibleIf": "{xpScore} >= 25",
+          "html": "<div style='position: fixed; bottom: 20px; right: 20px; z-index: 999;'>  <img src='https://i.imgur.com/cufxbvm.png' alt='Diamond Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        },
+        {
+          "type": "html",
+          "name": "second_emblem_50xp2",
+          "visibleIf": "{xpScore} >= 50",
+          "html": "<div style='position: fixed; bottom: 20px; right: 80px; z-index: 999;'>  <img src='https://img.freepik.com/premium-vector/pixel-art-key-vector-icon-isolated-white-background_97231-3539.jpg?w=1380' alt='Shield Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        },
+        {
+          "type": "html",
+          "name": "third_emblem_75xp",
+          "visibleIf": "{xpScore} >= 75",
+          "html": "<div style='position: fixed; bottom: 20px; right: 140px; z-index: 999;'>  <img src='https://img.freepik.com/free-vector/sword-weapon-video-game-icon_18591-84297.jpg?t=st=1745226571~exp=1745230171~hmac=8baec13a4d6e707a60f0440ff3c2f3538fdb319b195dac28bec0671b1818e2f7&w=1380' alt='Crown Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3);'/> </div>"
+        },
+        {
+          "type": "html",
+          "name": "fourth_emblem_100xp",
+          "visibleIf": "{xpScore} >= 100",
+          "html": "<div style='position: fixed; bottom: 20px; right: 200px; z-index: 999;'>  <img src='https://img.freepik.com/free-vector/gold-crown-with-jewels-3d-icon-royal-imperial-symbol-golden-accessory-with-gems-3d-vector-illustration-white-background-success-royalty-luxury-monarchy-decoration-concept_74855-26000.jpg?uid=R196936359&ga=GA1.1.1110604184.1745225314&semt=ais_hybrid&w=740' alt='Treasure Emblem' style='width: 50px; height: auto; border-radius: 50%; box-shadow: 0 0 15px rgba(0,0,0,0.4);'/> </div>"
+        },
+        {
+          "type": "html",
+          "name": "short_answer_warning_emblem2",
+          "visibleIf": "{computer_productivity_reason.length} >= 1",
+          "html": "<div style='position: fixed; bottom: 20px; right: 260px; z-index: 999;'>  <img src='https://img.freepik.com/free-vector/flat-illustration-international-tiger-day-awareness_23-2150518815.jpg?t=st=1745273621~exp=1745277221~hmac=678008bd4dd37e6c40dba2bc8c51a553f3e42f21e5d90d9ae802000d66ea9b13&w=1380' alt='Warning Icon' style='width: 50px; height: 50px; border-radius: 50%; box-shadow: 0 0 15px rgba(0,0,0,0.3);'/> </div>"
+        }
+      ]
+    },
+    {
+      "name": "page2",
+      "elements": [
+        {
+          "type": "html",
+          "name": "final_fullscreen_image",
+          "html": "<div style='width: 100vw; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center;'> <img src='https://i.imgur.com/9LUFv3P.png' alt='Quest Image' style='width: 100%; height: 100%; object-fit: cover;' /> </div>"
+        },
+        {
+          "type": "html",
+          "name": "final_popup_message",
+          "html": "<div onclick=\"this.style.display='none'\" style='position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; background-color: rgba(0,0,0,0.85); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5); cursor: pointer;'> <img src='https://i.imgur.com/6SNv1hV.png' alt='Congrats Icon' style='width: 60px; height: 60px; margin-bottom: 15px;'/> <br/> <strong>Congratulations, adventurer!</strong><br/>You’ve reached the Treasure!Well done Traveler (please press complete).<br/><small>(Click to close)</small></div>"
+        }
+      ]
+    }
+  ],
+  "calculatedValues": [
+    {
+      "name": "xpScore",
+      "expression": "min(100, sum(iif({weekday_phone_hours} notempty, 2.5, 0), iif({weekend_phone_hours} notempty, 2.5, 0), iif({phone_activities} notempty, 2.5, 0), iif({phone_time} notempty, 2.5, 0), iif({phone_productivity_effect} notempty, 2.5, 0), iif({phone_productivity_reason} notempty, 2.5, 0), iif({phone_sleep_impact} notempty, 2.5, 0), iif({phone_feelings} notempty, 2.5, 0), iif({phone_effects} notempty, 2.5, 0), iif({phone_morning_check} notempty, 2.5, 0), iif({weekday_tv_hours} notempty, 3, 0), iif({weekend_tv_hours} notempty, 3, 0), iif({tv_content} notempty, 3, 0), iif({tv_sleep_effect} notempty, 3, 0), iif({tv_sleep_reason} notempty, 3, 0), iif({tv_feelings} notempty, 5, 0), iif({tv_social_presence} notempty, 5, 0), iif({weekday_computer_hours} notempty, 3, 0), iif({weekend_computer_hours} notempty, 3, 0), iif({computer_reasons} notempty, 3, 0), iif({computer_times} notempty, 3, 0), iif({computer_productivity_effect} notempty, 3, 0), iif({computer_productivity_reason} notempty, 3, 0), iif({computer_symptoms} notempty, 3, 0), iif({computer_time_control} notempty, 4, 0), iif({survey_engagement} notempty, 3, 0), iif({survey_clarity} notempty, 3, 0), iif({question_difficulty} notempty, 3, 0), iif({survey_fun} notempty, 3, 0), iif({response_accuracy} notempty, 3, 0), iif({survey_navigation} notempty, 5, 0), iif({survey_hesitation} notempty, 5, 0)))"
+    },
+    {
+      "name": "show25popup",
+      "expression": "{xpScore} >= 25 and {xpScore} < 50"
+    },
+    {
+      "name": "show50popup",
+      "expression": "{xpScore} >= 50 and {xpScore} < 75"
+    },
+    {
+      "name": "show75popup",
+      "expression": "{xpScore} >= 75 and {xpScore} < 100"
+    },
+    {
+      "name": "show100popup",
+      "expression": "{xpScore} >= 100"
+    }
+  ],
+  "headerView": "advanced"
+}
+;
+
+const endpoint = "https://script.google.com/macros/s/AKfycbyCQyhAWDYlYzvBP3yV-j0eF17DElRovsMBwKNuTJB48RRSZ3-MfWLBn5Etflfj2lSX/exec";
+
+      const survey = new Survey.Model(surveyJSON);
+
+      function getUserId() {
+        let id = localStorage.getItem("surveyUserId");
+        if (!id) {
+          id = Math.random().toString(36).substring(2);
+          localStorage.setItem("surveyUserId", id);
+        }
+        return id;
+      }
+
+      let pageTimings = {};
+      let pageStartTime = Date.now();
+
+      survey.onCurrentPageChanged.add((s, options) => {
+        const prevPage = s.currentPageNo - 1;
+        const now = Date.now();
+        if (prevPage >= 0) {
+          pageTimings[prevPage] = now - pageStartTime;
+        }
+        pageStartTime = now;
+
+        fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: getUserId(),
+            event: "pageChanged",
+            pageNo: s.currentPageNo,
+            timestamp: new Date().toISOString()
+          })
+        });
+      });
+
+      survey.onComplete.add(s => {
+        const now = Date.now();
+        pageTimings[s.currentPageNo] = now - pageStartTime;
+
+        const data = s.data;
+        const answeredKeys = Object.keys(data);
+
+        // All question names in the survey
+        const allQuestionNames = s.getAllQuestions().map(q => q.name);
+
+        // Determine unanswered questions
+        const unanswered = allQuestionNames.filter(name => !answeredKeys.includes(name));
+
+        // Extract comment-like answers (open text)
+        const commentAnswers = answeredKeys
+          .filter(k => typeof data[k] === "string" && data[k].length > 1)
+          .map(k => ({ [k]: data[k] }));
+
+        fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: getUserId(),
+            event: "completed",
+            pageNo: s.currentPageNo,
+            lastQuestion: answeredKeys[answeredKeys.length - 1],
+            numAnswered: answeredKeys.length,
+            unansweredQuestions: unanswered,
+            commentAnswers: commentAnswers,
+            timeSpentPerPage: pageTimings,
+            answers: data,
+            timestamp: new Date().toISOString()
+          })
+        });
+
+        document.querySelector("#surveyContainer").innerHTML = "<h3>🎉 Thank you for completing the survey!</h3>";
+      });
+
+      window.onbeforeunload = function () {
+        fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: getUserId(),
+            event: "abandoned",
+            pageNo: survey.currentPageNo,
+            timestamp: new Date().toISOString()
+          })
+        });
+      };
+
+      $("#surveyContainer").Survey({ model: survey });
+    </script>
+  </body>
+</html>
