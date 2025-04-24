@@ -4,9 +4,12 @@
     <meta charset="utf-8" />
     <title>Min Enkät</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SurveyJS Theme and Scripts -->
     <link href="https://unpkg.com/survey-core/modern.min.css" rel="stylesheet" />
     <script src="https://unpkg.com/jquery"></script>
     <script src="https://unpkg.com/survey-jquery@latest/survey.jquery.min.js"></script>
+
     <style>
       body {
         margin: 0;
@@ -51,6 +54,9 @@
 
     <script>
       Survey.StylesManager.applyTheme("modern");
+
+      const endpoint = "https://script.google.com/macros/s/AKfycbyCQyhAWDYlYzvBP3yV-j0eF17DElRovsMBwKNuTJB48RRSZ3-MfWLBn5Etflfj2lSX/exec";
+
 
       // ✅ Your Survey JSON 
       const surveyJSON = {
@@ -635,10 +641,7 @@
   "headerView": "advanced"
 }
 ;
-
-const endpoint = "https://script.google.com/macros/s/AKfycbyCQyhAWDYlYzvBP3yV-j0eF17DElRovsMBwKNuTJB48RRSZ3-MfWLBn5Etflfj2lSX/exec";
-
-      const survey = new Survey.Model(surveyJSON);
+const survey = new Survey.Model(surveyJSON);
 
       function getUserId() {
         let id = localStorage.getItem("surveyUserId");
@@ -679,13 +682,9 @@ const endpoint = "https://script.google.com/macros/s/AKfycbyCQyhAWDYlYzvBP3yV-j0
         const data = s.data;
         const answeredKeys = Object.keys(data);
 
-        // All question names in the survey
         const allQuestionNames = s.getAllQuestions().map(q => q.name);
-
-        // Determine unanswered questions
         const unanswered = allQuestionNames.filter(name => !answeredKeys.includes(name));
 
-        // Extract comment-like answers (open text)
         const commentAnswers = answeredKeys
           .filter(k => typeof data[k] === "string" && data[k].length > 1)
           .map(k => ({ [k]: data[k] }));
